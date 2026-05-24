@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Survival Note (Homework)</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ws: {
+                            bg: '#0f1110',
+                            panel: 'rgba(20, 25, 22, 0.95)',
+                            sporeGreen: '#65a30d',
+                            brick: '#b45309',
+                            danger: '#dc2626'
+                        }
+                    },
+                    fontFamily: {
+                        epic: ['Oswald', 'sans-serif'],
+                        base: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f1110;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at top, rgba(101, 163, 13, 0.1) 0%, transparent 50%),
+                url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+        }
+
+        /* Mobile Container Simulation */
+        #mobile-container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 850px;
+            background-color: #0f1110;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(101, 163, 13, 0.2);
+            border: 2px solid #3f6212;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 400px) {
+            #mobile-container { border: none; box-shadow: none; height: 100vh; max-height: none; border-radius: 0; }
+        }
+
+        .btn-option {
+            background: rgba(28, 25, 23, 0.8); 
+            border: 2px solid #44403c;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            padding: 1.25rem 1rem;
+            border-radius: 4px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s;
+            position: relative;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+        .btn-option:active { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .btn-option.correct { background: #65a30d; border-color: #65a30d; color: #000; box-shadow: 0 0 15px rgba(101, 163, 13, 0.5); }
+        .btn-option.wrong { background: #dc2626; border-color: #dc2626; color: #fff; box-shadow: 0 0 15px rgba(220, 38, 38, 0.5); }
+        .btn-option.disabled { pointer-events: none; opacity: 0.7; }
+
+        .fade-in { animation: fadeIn 0.3s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        /* Praise Toast */
+        .praise-toast {
+            position: absolute; top: 15%; left: 50%; transform: translate(-50%, 0);
+            background: #65a30d; color: #000; border: 2px solid #65a30d;
+            font-family: 'Oswald', sans-serif; font-weight: 900;
+            padding: 0.5rem 1rem; text-transform: uppercase; letter-spacing: 0.1em;
+            box-shadow: 0 0 20px rgba(101, 163, 13, 0.6);
+            opacity: 0; pointer-events: none; z-index: 101; text-align: center;
+            border-radius: 2px;
+        }
+        .toast-anim { animation: toastUp 1.5s ease-out forwards; }
+        @keyframes toastUp {
+            0% { transform: translate(-50%, 20px) scale(0.8); opacity: 0; }
+            20% { transform: translate(-50%, 0) scale(1.1); opacity: 1; }
+            80% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -20px) scale(0.8); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mobile-container">
+        
+        <!-- HEADER -->
+        <header class="bg-black/90 border-b-2 border-ws-sporeDark p-4 flex justify-between items-center z-10 shrink-0 shadow-lg">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl drop-shadow-[0_0_5px_#65a30d]">🎒</span>
+                <div class="flex flex-col">
+                    <span class="text-[9px] text-gray-400 font-epic tracking-widest uppercase font-bold">Backpack</span>
+                    <span class="text-white font-epic text-xs font-black tracking-widest uppercase drop-shadow-md">Survival Test</span>
+                </div>
+            </div>
+            <span class="text-ws-sporeGreen font-epic font-bold text-[10px] border border-ws-sporeGreen px-2 py-0.5 rounded bg-ws-sporeGreen/10">LVL: A1</span>
+        </header>
+
+        <!-- START SCREEN -->
+        <div id="start-screen" class="flex-1 flex flex-col items-center justify-center p-6 text-center z-10 bg-gradient-to-b from-stone-900 to-[#0f1110]">
+            <img src="https://image.api.playstation.com/vulcan/ap/rnd/202206/0720/0kRqUeSBIbQzz7cen3c989c6.jpg" alt="The Last of Us" class="w-full max-w-[250px] object-cover drop-shadow-[0_0_15px_rgba(101,163,13,0.5)] mb-8 border-2 border-ws-sporeDark rounded">
+            <h1 class="text-3xl font-epic font-black text-white uppercase tracking-widest mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">Get Ready</h1>
+            <p class="text-gray-400 font-base font-bold text-sm mb-10">Pass the 15-question quiz about the Verb To Be and Wh- Questions.</p>
+            <button onclick="startQuiz()" class="w-full bg-ws-sporeGreen text-black font-epic font-black text-lg py-4 uppercase tracking-widest transition-transform hover:scale-105 shadow-[0_0_20px_rgba(101,163,13,0.4)] rounded border-none">Start Survival</button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden flex-1 flex flex-col p-6 z-10 overflow-y-auto">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <span class="font-base text-xs text-gray-500 uppercase tracking-widest font-bold">Question <span id="q-num" class="text-ws-sporeGreen">1</span>/15</span>
+                <span class="font-base text-xs text-gray-500 uppercase tracking-widest font-bold">Supplies: <span class="text-ws-brick"><span id="score-text">0</span></span></span>
+            </div>
+
+            <div id="question-container" class="flex-1 flex flex-col fade-in justify-center mb-8">
+                <p class="text-[10px] text-ws-sporeGreen uppercase tracking-widest mb-3 font-bold font-epic text-center border border-ws-sporeDark rounded py-1 bg-black/50">Complete the sentence</p>
+                <p id="q-text" class="text-2xl font-bold text-white mb-8 leading-relaxed font-base text-center"></p>
+                
+                <div id="options-container" class="flex flex-col gap-3">
+                    <!-- Options injected via JS -->
+                </div>
+            </div>
+
+            <button id="next-btn" onclick="nextQuestion()" class="hidden w-full mt-auto bg-black text-white border-2 border-ws-sporeGreen font-epic font-black text-base py-4 uppercase tracking-widest shadow-[0_0_15px_rgba(101,163,13,0.4)] rounded hover:bg-ws-sporeGreen hover:text-black transition-colors">Next Stage ▸</button>
+        </div>
+
+        <!-- END SCREEN -->
+        <div id="end-screen" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center z-10 bg-black">
+            <span class="text-7xl mb-6 drop-shadow-[0_0_20px_rgba(180,83,9,0.6)]">📦</span>
+            <h1 class="text-3xl font-epic font-black text-white uppercase tracking-widest mb-2 text-ws-brick">You Survived</h1>
+            <p class="text-gray-400 font-base text-sm font-bold mb-6">Final Score:</p>
+            <div class="text-5xl font-epic font-black text-white mb-10 border-2 border-ws-brick bg-orange-900/20 p-6 shadow-[0_0_30px_rgba(180,83,9,0.3)] rounded-lg">
+                <span id="final-score">0</span><span class="text-2xl text-gray-500">/15</span>
+            </div>
+            <button onclick="location.reload()" class="w-full bg-stone-900 border border-gray-600 text-gray-400 font-base font-bold text-sm py-4 uppercase tracking-widest hover:border-white hover:text-white transition-colors rounded">Return to Camp</button>
+        </div>
+
+        <!-- PRAISE TOAST -->
+        <div id="praise-toast" class="praise-toast">SURVIVED!</div>
+
+        <!-- BOTTOM PROGRESS BAR -->
+        <div class="h-2 w-full bg-gray-900 shrink-0 border-t border-gray-800">
+            <div id="progress-bar" class="h-full bg-ws-sporeGreen w-0 transition-all duration-300 shadow-[0_0_10px_#65a30d]"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            { q: "________ she alive?", options: ["Is", "Are"], answer: 0 },
+            { q: "________ are you afraid of?", options: ["What", "Where"], answer: 0 },
+            { q: "I ________ a survivor.", options: ["am", "are"], answer: 0 },
+            { q: "They ________ not dead. They are alive.", options: ["is", "are"], answer: 1 },
+            { q: "________ is the town? I don't know.", options: ["Where", "What"], answer: 0 },
+            { q: "Stop with the ________! Tell me the truth.", options: ["bullshit", "luck"], answer: 0 },
+            { q: "________ you afraid of the dark?", options: ["Is", "Are"], answer: 1 },
+            { q: "It is called ________.", options: ["luck", "where"], answer: 0 },
+            { q: "We ________ safe here.", options: ["are", "am"], answer: 0 },
+            { q: "________ is that monster?", options: ["What", "Where"], answer: 0 },
+            { q: "She ________ not infected.", options: ["is", "are"], answer: 0 },
+            { q: "________ is the girl? Is she in the house?", options: ["Where", "What"], answer: 0 },
+            { q: "You ________ very lucky.", options: ["are", "am"], answer: 0 },
+            { q: "I don't know ________ the monster is.", options: ["where", "what"], answer: 0 },
+            { q: "Are you ________?", options: ["alive", "luck"], answer: 0 }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        const praises = ["CRAFTED!", "GOOD!", "SURVIVED!", "NICE!"];
+
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('flex');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const qData = questions[currentQ];
+            document.getElementById('q-num').innerText = currentQ + 1;
+            document.getElementById('q-text').innerHTML = '"' + qData.q + '"';
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            qData.options.forEach(function(opt, index) {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option font-base';
+                btn.innerHTML = '<span class="text-ws-sporeGreen mr-2">♦</span> ' + opt;
+                btn.onclick = function() { checkAnswer(btn, index); };
+                container.appendChild(btn);
+            });
+
+            document.getElementById('next-btn').classList.add('hidden');
+            
+            const qContainer = document.getElementById('question-container');
+            qContainer.classList.remove('fade-in');
+            void qContainer.offsetWidth;
+            qContainer.classList.add('fade-in');
+
+            updateProgress();
+        }
+
+        function checkAnswer(btn, selectedIndex) {
+            const qData = questions[currentQ];
+            const allBtns = document.querySelectorAll('.btn-option');
+            
+            allBtns.forEach(function(b) { b.classList.add('disabled'); });
+
+            if (selectedIndex === qData.answer) {
+                btn.classList.add('correct');
+                score++;
+                document.getElementById('score-text').innerText = score; 
+                showPraise();
+            } else {
+                btn.classList.add('wrong');
+                allBtns[qData.answer].classList.add('correct'); 
+            }
+
+            const blankedText = qData.q.replace('________', '<span class="' + (selectedIndex === qData.answer ? 'text-ws-sporeGreen' : 'text-ws-danger') + ' underline underline-offset-4">' + qData.options[qData.answer] + '</span>');
+            document.getElementById('q-text').innerHTML = '"' + blankedText + '"';
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if (currentQ < questions.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('flex');
+            document.getElementById('end-screen').classList.remove('hidden');
+            document.getElementById('end-screen').classList.add('flex');
+            
+            const finalScoreEl = document.getElementById('final-score');
+            finalScoreEl.innerText = score;
+            if(score < 8) finalScoreEl.classList.add('text-ws-danger');
+
+            document.getElementById('progress-bar').style.width = '100%';
+        }
+
+        function updateProgress() {
+            const progress = (currentQ / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function showPraise() {
+            const toast = document.getElementById('praise-toast');
+            toast.innerText = praises[Math.floor(Math.random() * praises.length)];
+            toast.classList.remove('toast-anim');
+            void toast.offsetWidth;
+            toast.classList.add('toast-anim');
+        }
+    </script>
+</body>
+</html>
